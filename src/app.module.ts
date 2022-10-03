@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { CountriesModule } from './countries/countries.module';
 import entities from './entities';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CitiesModule } from './cities/cities.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       inject: [ConfigService],
     }),
     ScheduleModule.forRoot(),
+    CitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

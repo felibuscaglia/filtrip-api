@@ -16,19 +16,19 @@ export class CountriesService {
     private readonly countryFactory: CountryFactory,
     @InjectRepository(Country)
     private readonly countriesRepository: Repository<Country>,
-  ) {}
+  ) { }
 
   private readonly logger = new Logger('CountriesService');
 
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCountriesJob() {
     this.logger.log('Started execution of countries job');
-    const { data } = await this.httpService.axiosRef.get<ITeleportCountryDto>(
+    const { data: TELEPORT_COUNTRIES_DTO } = await this.httpService.axiosRef.get<ITeleportCountryDto>(
       `${TELEPORT_API_URL}/${TELEPORT_ENDPOINT.COUNTRY}/`,
     );
 
 
-    for (const COUNTRY_DTO of data._links['country:items']) {
+    for (const COUNTRY_DTO of TELEPORT_COUNTRIES_DTO._links['country:items']) {
       const UNFORMATTED_COUNTRY: IUnformattedCountry = {
         name: COUNTRY_DTO.name,
       };
