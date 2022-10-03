@@ -20,7 +20,7 @@ export class CitiesService {
   private readonly logger = new Logger('CitiesService');
 
 
-  @Cron('32 16 * * *')
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCitiesJob() {
     this.logger.log('Starting execution of cities job');
 

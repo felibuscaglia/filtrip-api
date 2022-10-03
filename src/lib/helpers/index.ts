@@ -1,3 +1,3 @@
 export const formatUrlSlug = (s: string) => {
-  return s.toLowerCase().split(' ').join('-');
+  return s.trim().toLowerCase().replace(/[.,]/g, '').replace(/[\s]/g, '-');
 };

@@ -26,6 +26,7 @@ export class CountriesService {
     const { data: TELEPORT_COUNTRIES_DTO } = await this.httpService.axiosRef.get<ITeleportCountryDto>(
       `${TELEPORT_API_URL}/${TELEPORT_ENDPOINT.COUNTRY}/`,
     );
+    let errorCounter = 0;
 
 
     for (const COUNTRY_DTO of TELEPORT_COUNTRIES_DTO._links['country:items']) {
@@ -42,9 +43,11 @@ export class CountriesService {
           'Could not save country with following data: ' + JSON.stringify(UNFORMATTED_COUNTRY),
         );
         this.logger.error(err);
+
+        errorCounter++;
       }
     }
 
-    this.logger.log('Finished execution of countries job');
+    this.logger.log('Finished execution of countries job. ' + errorCounter + ' errors occurred');
   }
 }
