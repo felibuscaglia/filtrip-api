@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Country } from 'src/entities';
 import { TELEPORT_API_URL } from 'src/lib/constants';
@@ -19,11 +20,13 @@ export class CountriesService {
 
   private readonly logger = new Logger('CountriesService');
 
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCountriesJob() {
     this.logger.log('Started execution of countries job');
     const { data } = await this.httpService.axiosRef.get<ITeleportCountryDto>(
       `${TELEPORT_API_URL}/${TELEPORT_ENDPOINT.COUNTRY}/`,
     );
+
 
     for (const COUNTRY_DTO of data._links['country:items']) {
       const UNFORMATTED_COUNTRY: IUnformattedCountry = {
@@ -36,7 +39,7 @@ export class CountriesService {
         this.logger.log('Successfully saved ' + COUNTRY.name);
       } catch (err) {
         this.logger.error(
-          'Could not save country with following data: ' + UNFORMATTED_COUNTRY,
+          'Could not save country with following data: ' + JSON.stringify(UNFORMATTED_COUNTRY),
         );
       }
     }
