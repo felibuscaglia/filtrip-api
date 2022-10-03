@@ -1,4 +1,5 @@
+import { City } from './city.entity';
 import { Country } from './country.entity';
 
-export { Country };
-export default [Country];
+export { Country, City };
+export default [Country, City];

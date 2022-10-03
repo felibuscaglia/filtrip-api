@@ -41,7 +41,10 @@ export class CountriesService {
         this.logger.error(
           'Could not save country with following data: ' + JSON.stringify(UNFORMATTED_COUNTRY),
         );
+        this.logger.error(err);
       }
     }
+
+    this.logger.log('Finished execution of countries job');
   }
 }
