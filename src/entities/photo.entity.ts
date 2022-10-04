@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { City } from "./city.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { City } from './city.entity';
 
 @Entity()
 export class Photo {
@@ -9,6 +9,7 @@ export class Photo {
   @Column({ nullable: false })
   url: string;
 
-  @ManyToOne(() => City, city => city.photos)
+  @ManyToOne(() => City, (city) => city.photos)
+  @JoinColumn({ name: 'city_id' })
   city: City;
 }
