@@ -6,7 +6,7 @@ import { City } from 'src/entities';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
 import { PhotosService } from 'src/photos/photos.service';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CityFactory } from './city.factory';
 import { ITeleportCityDetailsDto, ITeleportCityDto, ITeleportCityPhotosDto, IUnformattedCity } from './interfaces';
 
@@ -21,6 +21,12 @@ export class CitiesService {
 
   private readonly logger = new Logger('CitiesService');
 
+  public getCities(page: number, limit: number = 6) {
+    return this.citiesRepository.find({
+      skip: page * limit,
+      take: limit
+    });
+  }
 
   @Cron('38 23 * * *')
   private async getCitiesJob() {
