@@ -11,6 +11,31 @@ export interface ITeleportCityDto {
   }
 }
 
+export interface ITeleportCityDetailsDto {
+  _links: {
+    "ua:images": {
+      href: string;
+    },
+  }
+}
+
+interface ITeleportPhoto {
+  attribution: {
+    license: string;
+    photographer: string;
+    site: string;
+    source: string;
+  },
+  image: {
+    mobile: string;
+    web: string;
+  }
+}
+
+export interface ITeleportCityPhotosDto {
+  photos: ITeleportPhoto[];
+}
+
 export interface IUnformattedCity {
   name: string;
 }

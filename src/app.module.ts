@@ -7,6 +7,7 @@ import { CountriesModule } from './countries/countries.module';
 import entities from './entities';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CitiesModule } from './cities/cities.module';
+import { PhotosModule } from './photos/photos.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CitiesModule } from './cities/cities.module';
     }),
     ScheduleModule.forRoot(),
     CitiesModule,
+    PhotosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
