@@ -1,3 +1,4 @@
+import { CONTINENT } from 'src/lib/enums';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { City } from '.';
 
@@ -11,6 +12,9 @@ export class Country {
 
   @Column({ nullable: false, unique: true, name: 'url_slug' })
   urlSlug: string;
+
+  @Column({ nullable: false, default: '', enum: CONTINENT })
+  continent: CONTINENT;
 
   @OneToMany(() => City, (city) => city.country)
   cities: City[];
