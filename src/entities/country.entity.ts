@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { City } from '.';
 
 @Entity()
 export class Country {
@@ -10,4 +11,7 @@ export class Country {
 
   @Column({ nullable: false, unique: true, name: 'url_slug' })
   urlSlug: string;
+
+  @OneToMany(() => City, (city) => city.country)
+  cities: City[];
 }

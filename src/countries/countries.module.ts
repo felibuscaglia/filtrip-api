@@ -8,5 +8,6 @@ import { CountryFactory } from './country.factory';
 @Module({
   providers: [CountriesService, CountryFactory],
   imports: [HttpModule, TypeOrmModule.forFeature([Country])],
+  exports: [CountriesService]
 })
 export class CountriesModule {}

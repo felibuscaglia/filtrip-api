@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Photo } from 'src/entities';
 import { City } from 'src/entities/city.entity';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
@@ -32,7 +31,7 @@ export class CitiesService {
       skip: page * limit,
       take: limit,
       select: ['id', ...attributes] as FindOptionsSelect<City>,
-      relations: ['photos'],
+      relations: ['photos', 'country'],
     });
   }
 
@@ -48,11 +47,16 @@ export class CitiesService {
     for (const CITY_DTO of TELEPORT_CITIES_DTO._links['ua:item']) {
       const CITY_NAME = CITY_DTO.name;
 
-      const UNFORMATTED_CITY: IUnformattedCity = {
-        name: CITY_NAME,
-      };
-
       try {
+        const { data: CITY_DETAILS_DTO } =
+          await this.httpService.axiosRef.get<ITeleportCityDetailsDto>(
+            CITY_DTO.href,
+          );
+        const UNFORMATTED_CITY: IUnformattedCity = {
+          name: CITY_NAME,
+          countryName: CITY_DETAILS_DTO._links['ua:countries'][0]?.name,
+          region: CITY_DETAILS_DTO._links['ua:admin1-divisions'][0]?.name,
+        };
         const CITY = await this.cityFactory.format(UNFORMATTED_CITY);
         const SAVED_CITY = await this.findBy({ urlSlug: CITY.urlSlug });
         const CITY_ENTITY = await this.citiesRepository.save(
@@ -66,10 +70,6 @@ export class CitiesService {
 
         // City details
         this.logger.log('Saving photos from ' + CITY_NAME);
-        const { data: CITY_DETAILS_DTO } =
-          await this.httpService.axiosRef.get<ITeleportCityDetailsDto>(
-            CITY_DTO.href,
-          );
         await this.saveCityPhotos(
           CITY_DETAILS_DTO._links['ua:images'].href,
           CITY_ENTITY,
@@ -78,10 +78,7 @@ export class CitiesService {
 
         this.logger.log('Successfully saved ' + CITY_NAME);
       } catch (err) {
-        this.logger.error(
-          'Could not save city with following data: ' +
-            JSON.stringify(UNFORMATTED_CITY),
-        );
+        this.logger.error('Could not save city ' + CITY_NAME);
         this.logger.error(err);
       }
     }
