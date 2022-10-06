@@ -7,10 +7,14 @@ import { CountryDto, IUnformattedCountry } from './interfaces';
 export class CountryFactory {
   constructor() {}
 
-  public async format({ name }: IUnformattedCountry): Promise<CountryDto> {
+  public async format({
+    name,
+    continent,
+  }: IUnformattedCountry): Promise<CountryDto> {
     const FORMATTED_COUNTRY: CountryDto = {
       name,
       urlSlug: formatUrlSlug(name),
+      continent,
     };
 
     const errors = await validate(FORMATTED_COUNTRY);

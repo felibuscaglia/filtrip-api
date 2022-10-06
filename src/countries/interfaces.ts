@@ -1,4 +1,5 @@
-import { IsDefined, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import { IsDefined, IsEnum, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import { CONTINENT } from 'src/lib/enums';
 
 interface ITeleportCountry {
   href: string;
@@ -13,6 +14,16 @@ export interface ITeleportCountryDto {
 
 export interface IUnformattedCountry {
   name: string;
+  continent: CONTINENT;
+}
+
+export interface ITeleportCountryDetailsDto {
+  _links: {
+    'country:continent': {
+      href: string;
+      name: string;
+    };
+  };
 }
 
 export class CountryDto {
@@ -26,4 +37,10 @@ export class CountryDto {
   @IsString()
   @IsLowercase()
   urlSlug: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(CONTINENT)
+  continent: CONTINENT;
 }
