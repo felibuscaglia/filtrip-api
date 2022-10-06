@@ -1,4 +1,5 @@
-import { IsDefined, IsLowercase, IsNotEmpty, IsString } from "class-validator";
+import { IsDefined, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import { Country } from 'src/entities';
 
 interface ITeleportCity {
   name: string;
@@ -7,16 +8,20 @@ interface ITeleportCity {
 
 export interface ITeleportCityDto {
   _links: {
-    "ua:item": ITeleportCity[];
-  }
+    'ua:item': ITeleportCity[];
+  };
 }
 
 export interface ITeleportCityDetailsDto {
   _links: {
-    "ua:images": {
+    'ua:images': {
       href: string;
-    },
-  }
+    };
+    'ua:countries': {
+      href: string;
+      name: string;
+    }[];
+  };
 }
 
 interface ITeleportPhoto {
@@ -25,11 +30,11 @@ interface ITeleportPhoto {
     photographer: string;
     site: string;
     source: string;
-  },
+  };
   image: {
     mobile: string;
     web: string;
-  }
+  };
 }
 
 export interface ITeleportCityPhotosDto {
@@ -38,6 +43,7 @@ export interface ITeleportCityPhotosDto {
 
 export interface IUnformattedCity {
   name: string;
+  countryName: string;
 }
 
 export class CityDto {
@@ -51,4 +57,7 @@ export class CityDto {
   @IsString()
   @IsLowercase()
   urlSlug: string;
+
+  @IsDefined()
+  country: Country;
 }

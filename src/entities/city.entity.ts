@@ -1,5 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Photo } from "./photo.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Country } from '.';
+import { Photo } from './photo.entity';
 
 @Entity()
 export class City {
@@ -13,5 +21,9 @@ export class City {
   urlSlug: string;
 
   @OneToMany(() => Photo, (photo) => photo.city)
-  photos: Photo[]
+  photos: Photo[];
+
+  @ManyToOne(() => Country, (country) => country.cities)
+  @JoinColumn({ name: 'country_id' })
+  country: Country;
 }

@@ -36,7 +36,7 @@ export class CitiesService {
     });
   }
 
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  @Cron('49 19 * * *')
   private async getCitiesJob() {
     this.logger.log('Starting execution of cities job');
 
@@ -48,11 +48,15 @@ export class CitiesService {
     for (const CITY_DTO of TELEPORT_CITIES_DTO._links['ua:item']) {
       const CITY_NAME = CITY_DTO.name;
 
-      const UNFORMATTED_CITY: IUnformattedCity = {
-        name: CITY_NAME,
-      };
-
       try {
+        const { data: CITY_DETAILS_DTO } =
+          await this.httpService.axiosRef.get<ITeleportCityDetailsDto>(
+            CITY_DTO.href,
+          );
+        const UNFORMATTED_CITY: IUnformattedCity = {
+          name: CITY_NAME,
+          countryName: CITY_DETAILS_DTO._links['ua:countries'][0]?.name,
+        };
         const CITY = await this.cityFactory.format(UNFORMATTED_CITY);
         const SAVED_CITY = await this.findBy({ urlSlug: CITY.urlSlug });
         const CITY_ENTITY = await this.citiesRepository.save(
@@ -66,10 +70,6 @@ export class CitiesService {
 
         // City details
         this.logger.log('Saving photos from ' + CITY_NAME);
-        const { data: CITY_DETAILS_DTO } =
-          await this.httpService.axiosRef.get<ITeleportCityDetailsDto>(
-            CITY_DTO.href,
-          );
         await this.saveCityPhotos(
           CITY_DETAILS_DTO._links['ua:images'].href,
           CITY_ENTITY,
@@ -78,10 +78,7 @@ export class CitiesService {
 
         this.logger.log('Successfully saved ' + CITY_NAME);
       } catch (err) {
-        this.logger.error(
-          'Could not save city with following data: ' +
-            JSON.stringify(UNFORMATTED_CITY),
-        );
+        this.logger.error('Could not save city ' + CITY_NAME);
         this.logger.error(err);
       }
     }

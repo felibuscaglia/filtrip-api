@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Country } from 'src/entities';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CountryFactory } from './country.factory';
 import { ITeleportCountryDto, IUnformattedCountry } from './interfaces';
 
@@ -19,6 +19,10 @@ export class CountriesService {
   ) { }
 
   private readonly logger = new Logger('CountriesService');
+
+  public findOneBy(options: FindOneOptions<Country>) {
+    return this.countriesRepository.findOne(options);
+  }
 
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCountriesJob() {
