@@ -12,15 +12,18 @@ export interface ITeleportCityDto {
   };
 }
 
+interface ITeleportLink { 
+  href: string;
+  name: string;
+}
+
 export interface ITeleportCityDetailsDto {
   _links: {
     'ua:images': {
       href: string;
     };
-    'ua:countries': {
-      href: string;
-      name: string;
-    }[];
+    'ua:countries': ITeleportLink[];
+    'ua:admin1-divisions': ITeleportLink[];
   };
 }
 
@@ -44,6 +47,7 @@ export interface ITeleportCityPhotosDto {
 export interface IUnformattedCity {
   name: string;
   countryName: string;
+  region: string;
 }
 
 export class CityDto {
@@ -57,6 +61,11 @@ export class CityDto {
   @IsString()
   @IsLowercase()
   urlSlug: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsString()
+  region: string;
 
   @IsDefined()
   country: Country;

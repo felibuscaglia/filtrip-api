@@ -12,7 +12,7 @@ export interface ITeleportCountryDto {
 }
 
 export interface IUnformattedCountry {
-    name: string;
+  name: string;
 }
 
 export class CountryDto {

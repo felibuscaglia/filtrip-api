@@ -20,6 +20,9 @@ export class City {
   @Column({ nullable: false, unique: true, name: 'url_slug' })
   urlSlug: string;
 
+  @Column({ nullable: false })
+  region: string;
+
   @OneToMany(() => Photo, (photo) => photo.city)
   photos: Photo[];
 

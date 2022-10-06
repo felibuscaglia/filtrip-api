@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Photo } from 'src/entities';
 import { City } from 'src/entities/city.entity';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
@@ -32,11 +31,11 @@ export class CitiesService {
       skip: page * limit,
       take: limit,
       select: ['id', ...attributes] as FindOptionsSelect<City>,
-      relations: ['photos'],
+      relations: ['photos', 'country'],
     });
   }
 
-  @Cron('49 19 * * *')
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCitiesJob() {
     this.logger.log('Starting execution of cities job');
 
@@ -56,6 +55,7 @@ export class CitiesService {
         const UNFORMATTED_CITY: IUnformattedCity = {
           name: CITY_NAME,
           countryName: CITY_DETAILS_DTO._links['ua:countries'][0]?.name,
+          region: CITY_DETAILS_DTO._links['ua:admin1-divisions'][0]?.name,
         };
         const CITY = await this.cityFactory.format(UNFORMATTED_CITY);
         const SAVED_CITY = await this.findBy({ urlSlug: CITY.urlSlug });
