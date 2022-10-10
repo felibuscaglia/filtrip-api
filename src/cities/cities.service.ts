@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PageVisitReport } from 'src/entities';
 import { City } from 'src/entities/city.entity';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
@@ -31,7 +32,7 @@ export class CitiesService {
       skip: page * limit,
       take: limit,
       select: ['id', ...attributes] as FindOptionsSelect<City>,
-      relations: ['photos', 'country'],
+      relations: ['photos', 'country', 'page_visit_report'],
     });
   }
 

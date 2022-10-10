@@ -12,3 +12,7 @@ export enum CONTINENT {
   Oceania = 'Oceania',
   'South America' = 'South America',
 }
+
+export enum ENTITY {
+  CITIES = 'city',
+}

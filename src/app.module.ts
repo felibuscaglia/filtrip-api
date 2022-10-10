@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -8,6 +8,8 @@ import entities from './entities';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CitiesModule } from './cities/cities.module';
 import { PhotosModule } from './photos/photos.module';
+import { VisitsCountMiddleware } from './middlewares/visits-count.middleware';
+import { PageVisitsModule } from './page-visits/page-visits.module';
 
 @Module({
   imports: [
@@ -30,8 +32,16 @@ import { PhotosModule } from './photos/photos.module';
     ScheduleModule.forRoot(),
     CitiesModule,
     PhotosModule,
+    PageVisitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(VisitsCountMiddleware)
+      .exclude({ path: '/cities', method: RequestMethod.GET })
+      .forRoutes({ path: 'cities/*', method: RequestMethod.GET });
+  }
+}
