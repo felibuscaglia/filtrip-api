@@ -10,7 +10,13 @@ import { CountriesModule } from 'src/countries/countries.module';
 
 @Module({
   providers: [CitiesService, CityFactory],
-  imports: [HttpModule, TypeOrmModule.forFeature([City]), PhotosModule, CountriesModule],
-  controllers: [CitiesController]
+  imports: [
+    HttpModule,
+    TypeOrmModule.forFeature([City]),
+    PhotosModule,
+    CountriesModule,
+  ],
+  controllers: [CitiesController],
+  exports: [CitiesService],
 })
-export class CitiesModule { }
+export class CitiesModule {}

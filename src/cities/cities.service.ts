@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PageVisitReport } from 'src/entities';
 import { City } from 'src/entities/city.entity';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
@@ -31,9 +30,19 @@ export class CitiesService {
     return this.citiesRepository.find({
       skip: page * limit,
       take: limit,
-      select: ['id', ...attributes] as FindOptionsSelect<City>,
-      relations: ['photos', 'country', 'page_visit_report'],
+      select: ['id', 'visitsCount', ...attributes] as FindOptionsSelect<City>,
+      relations: ['photos', 'country'],
+      order: {
+        visitsCount: 'DESC',
+      },
     });
+  }
+
+  public sumPageVisit(urlSlug: string) {
+    const SQL = `
+    UPDATE city SET visits_count = visits_count + 1 where url_slug = '${urlSlug}'
+    `;
+    this.citiesRepository.query(SQL);
   }
 
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)

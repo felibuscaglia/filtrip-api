@@ -23,6 +23,9 @@ export class City {
   @Column({ nullable: false })
   region: string;
 
+  @Column({ nullable: false, default: 0, name: 'visits_count' })
+  visitsCount: number;
+
   @OneToMany(() => Photo, (photo) => photo.city)
   photos: Photo[];
 

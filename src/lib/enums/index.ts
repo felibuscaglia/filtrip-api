@@ -14,5 +14,5 @@ export enum CONTINENT {
 }
 
 export enum ENTITY {
-  CITIES = 'city',
+  CITIES = 'cities',
 }

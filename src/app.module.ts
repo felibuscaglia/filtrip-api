@@ -9,7 +9,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CitiesModule } from './cities/cities.module';
 import { PhotosModule } from './photos/photos.module';
 import { VisitsCountMiddleware } from './middlewares/visits-count.middleware';
-import { PageVisitsModule } from './page-visits/page-visits.module';
 
 @Module({
   imports: [
@@ -32,7 +31,6 @@ import { PageVisitsModule } from './page-visits/page-visits.module';
     ScheduleModule.forRoot(),
     CitiesModule,
     PhotosModule,
-    PageVisitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
