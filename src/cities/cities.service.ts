@@ -30,9 +30,19 @@ export class CitiesService {
     return this.citiesRepository.find({
       skip: page * limit,
       take: limit,
-      select: ['id', ...attributes] as FindOptionsSelect<City>,
+      select: ['id', 'visitsCount', ...attributes] as FindOptionsSelect<City>,
       relations: ['photos', 'country'],
+      order: {
+        visitsCount: 'DESC',
+      },
     });
+  }
+
+  public sumPageVisit(urlSlug: string) {
+    const SQL = `
+    UPDATE city SET visits_count = visits_count + 1 where url_slug = '${urlSlug}'
+    `;
+    this.citiesRepository.query(SQL);
   }
 
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)

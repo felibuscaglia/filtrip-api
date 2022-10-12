@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Param,
   ParseArrayPipe,
   ParseIntPipe,
   Query,
@@ -18,5 +19,10 @@ export class CitiesController {
     @Query('attributes', ParseArrayPipe) attributes: string[],
   ) {
     return this.citiesService.getCities(page, limit, attributes);
+  }
+
+  @Get('/:urlSlug')
+  getCity(@Param('urlSlug') urlSlug: string) {
+    return urlSlug;
   }
 }
