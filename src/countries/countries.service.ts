@@ -28,7 +28,7 @@ export class CountriesService {
     return this.countriesRepository.findOne(options);
   }
 
-  @Cron('23 15 * * *')
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCountriesJob() {
     this.logger.log('Started execution of countries job');
     const { data: TELEPORT_COUNTRIES_DTO } =

@@ -17,8 +17,9 @@ export class CitiesController {
     @Query('page', ParseIntPipe) page: number,
     @Query('limit', ParseIntPipe) limit: number,
     @Query('attributes', ParseArrayPipe) attributes: string[],
+    @Query('name') name?: string,
   ) {
-    return this.citiesService.getCities(page, limit, attributes);
+    return this.citiesService.getCities(page, limit, attributes, name);
   }
 
   @Get('/:urlSlug')

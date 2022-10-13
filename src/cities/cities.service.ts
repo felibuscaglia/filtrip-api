@@ -6,7 +6,13 @@ import { City } from 'src/entities/city.entity';
 import { TELEPORT_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
 import { PhotosService } from 'src/photos/photos.service';
-import { FindOptionsSelect, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOptionsSelect,
+  FindOptionsWhere,
+  ILike,
+  Repository,
+} from 'typeorm';
 import { CityFactory } from './city.factory';
 import {
   ITeleportCityDetailsDto,
@@ -26,8 +32,13 @@ export class CitiesService {
 
   private readonly logger = new Logger('CitiesService');
 
-  public getCities(page: number, limit: number, attributes: string[]) {
-    return this.citiesRepository.find({
+  public getCities(
+    page: number,
+    limit: number,
+    attributes: string[],
+    name?: string,
+  ) {
+    const FIND_OPTIONS: FindManyOptions<City> = {
       skip: page * limit,
       take: limit,
       select: ['id', 'visitsCount', ...attributes] as FindOptionsSelect<City>,
@@ -35,7 +46,15 @@ export class CitiesService {
       order: {
         visitsCount: 'DESC',
       },
-    });
+    };
+
+    if (name) {
+      FIND_OPTIONS.where = {
+        name: ILike(`${name}%`),
+      };
+    }
+
+    return this.citiesRepository.find(FIND_OPTIONS);
   }
 
   public sumPageVisit(urlSlug: string) {
