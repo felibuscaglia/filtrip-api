@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { City } from 'src/entities/city.entity';
-import { TELEPORT_API_URL } from 'src/lib/constants';
+import { TELEPORT_API_URL, WIKIPEDIA_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
 import { PhotosService } from 'src/photos/photos.service';
 import {
@@ -19,6 +19,8 @@ import {
   ITeleportCityDto,
   ITeleportCityPhotosDto,
   IUnformattedCity,
+  IWikipediaDTO,
+  IWikipediaQuery,
 } from './interfaces';
 
 @Injectable()
@@ -64,6 +66,13 @@ export class CitiesService {
     this.citiesRepository.query(SQL);
   }
 
+  public getCityByUrlSlug(urlSlug: string) {
+    return this.citiesRepository.findOne({
+      where: { urlSlug },
+      relations: ['photos', 'country'],
+    });
+  }
+
   @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
   private async getCitiesJob() {
     this.logger.log('Starting execution of cities job');
@@ -85,7 +94,9 @@ export class CitiesService {
           name: CITY_NAME,
           countryName: CITY_DETAILS_DTO._links['ua:countries'][0]?.name,
           region: CITY_DETAILS_DTO._links['ua:admin1-divisions'][0]?.name,
+          description: await this.fetchWikipediaDescription(CITY_NAME),
         };
+
         const CITY = await this.cityFactory.format(UNFORMATTED_CITY);
         const SAVED_CITY = await this.findBy({ urlSlug: CITY.urlSlug });
         const CITY_ENTITY = await this.citiesRepository.save(
@@ -120,7 +131,7 @@ export class CitiesService {
       await this.httpService.axiosRef.get<ITeleportCityPhotosDto>(photosHref);
 
     for (const PHOTO of PHOTOS_DTO.photos) {
-      await this.photosService.save({
+      await this.photosService.upsert({
         url: PHOTO.image.web,
         city,
       });
@@ -129,5 +140,38 @@ export class CitiesService {
 
   private findBy(whereOptions: FindOptionsWhere<City>) {
     return this.citiesRepository.findOneBy(whereOptions);
+  }
+
+  private async fetchWikipediaDescription(query: string) {
+    try {
+      const { data: WIKIPEDIA_DTO } =
+        await this.httpService.axiosRef.get<IWikipediaDTO>(WIKIPEDIA_API_URL, {
+          params: {
+            format: 'json',
+            action: 'query',
+            prop: 'extracts',
+            explaintext: '1',
+            exsentences: '7',
+            titles: query,
+          },
+        });
+
+      if (WIKIPEDIA_DTO) {
+        return this.getWikipediaDescriptionFromQuery(WIKIPEDIA_DTO.query);
+      } else {
+        this.logger.warn('No Wikipedia page found for ' + query);
+      }
+    } catch (err) {
+      this.logger.error(
+        'Error ocurred when fetching Wikipedia description for ' + query,
+      );
+      this.logger.error('Error: ' + JSON.stringify(err));
+    }
+  }
+
+  private getWikipediaDescriptionFromQuery(query: IWikipediaQuery) {
+    const pages = query.pages;
+    const keyPages = Object.values(pages);
+    return keyPages[0]?.extract ?? null;
   }
 }

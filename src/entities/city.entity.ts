@@ -26,6 +26,9 @@ export class City {
   @Column({ nullable: false, default: 0, name: 'visits_count' })
   visitsCount: number;
 
+  @Column({ nullable: true })
+  description: string;
+
   @OneToMany(() => Photo, (photo) => photo.city)
   photos: Photo[];
 

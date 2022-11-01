@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseArrayPipe,
   ParseIntPipe,
@@ -23,7 +24,13 @@ export class CitiesController {
   }
 
   @Get('/:urlSlug')
-  getCity(@Param('urlSlug') urlSlug: string) {
-    return urlSlug;
+  async getCity(@Param('urlSlug') urlSlug: string) {
+    const city = await this.citiesService.getCityByUrlSlug(urlSlug);
+
+    if (!city) {
+      throw new NotFoundException('City not found');
+    }
+
+    return city;
   }
 }

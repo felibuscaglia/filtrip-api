@@ -11,8 +11,6 @@ export class VisitsCountMiddleware implements NestMiddleware {
       .slice(1, req.url.length)
       .split('/');
 
-    console.log({ ENTITY_SLUG });
-
     switch (ENTITY_SLUG) {
       case ENTITY.CITIES:
         this.ciitesService.sumPageVisit(URL_SLUG);

@@ -7,10 +7,21 @@ import { ImageDto } from './interfaces';
 @Injectable()
 export class PhotosService {
   constructor(
-    @InjectRepository(Photo) private readonly photosRepository: Repository<Photo>
-  ) { }
+    @InjectRepository(Photo)
+    private readonly photosRepository: Repository<Photo>,
+  ) {}
 
   save(imageDto: ImageDto) {
-    return this.photosRepository.save(imageDto)
+    return this.photosRepository.save(imageDto);
+  }
+
+  async upsert(imageDto: ImageDto) {
+    await this.photosRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Photo)
+      .values(imageDto)
+      .orIgnore(true)
+      .execute();
   }
 }
