@@ -1,6 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { City } from '.';
 
+@Unique('unique_city_score', ['name', 'city'])
 @Entity({ name: 'city_score' })
 export class CityScore {
   @PrimaryGeneratedColumn({ name: 'city_score_id' })
