@@ -12,11 +12,14 @@ export class CityFactory {
     name,
     countryName,
     region,
+    description
   }: IUnformattedCity): Promise<CityDto> {
+    console.log({ description });
     const FORMATTED_CITY: CityDto = {
       name,
       urlSlug: formatUrlSlug(name),
       region,
+      description,
       country: await this.countriesService.findOneBy({
         where: {
           urlSlug: formatUrlSlug(countryName),

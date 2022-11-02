@@ -1,4 +1,4 @@
-import { IsDefined, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import { IsDefined, IsLowercase, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Country } from 'src/entities';
 
 interface ITeleportCity {
@@ -12,7 +12,7 @@ export interface ITeleportCityDto {
   };
 }
 
-interface ITeleportLink { 
+interface ITeleportLink {
   href: string;
   name: string;
 }
@@ -48,6 +48,26 @@ export interface IUnformattedCity {
   name: string;
   countryName: string;
   region: string;
+  description?: string;
+}
+
+export interface IWikipediaDTO {
+  batchcomplete: string;
+  query: IWikipediaQuery;
+}
+
+export interface IWikipediaQuery {
+  pages: IWikipediaPages;
+}
+
+export interface IWikipediaPages {
+  [key: string]: {
+    pageid?: number;
+    ns: number;
+    title: string;
+    extract?: string;
+    missing?: string;
+  };
 }
 
 export class CityDto {
@@ -66,6 +86,9 @@ export class CityDto {
   @IsNotEmpty()
   @IsString()
   region: string;
+
+  @IsOptional()
+  description?: string;
 
   @IsDefined()
   country: Country;
