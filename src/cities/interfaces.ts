@@ -1,4 +1,10 @@
-import { IsDefined, IsLowercase, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsDefined,
+  IsLowercase,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Country } from 'src/entities';
 
 interface ITeleportCity {
@@ -12,18 +18,19 @@ export interface ITeleportCityDto {
   };
 }
 
-interface ITeleportLink {
+class BaseTeleportLink {
   href: string;
+}
+class TeleportLink extends BaseTeleportLink {
   name: string;
 }
 
 export interface ITeleportCityDetailsDto {
   _links: {
-    'ua:images': {
-      href: string;
-    };
-    'ua:countries': ITeleportLink[];
-    'ua:admin1-divisions': ITeleportLink[];
+    'ua:images': BaseTeleportLink;
+    'ua:scores': BaseTeleportLink;
+    'ua:countries': TeleportLink[];
+    'ua:admin1-divisions': TeleportLink[];
   };
 }
 

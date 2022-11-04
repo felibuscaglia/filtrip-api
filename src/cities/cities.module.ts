@@ -7,6 +7,7 @@ import { CitiesService } from './cities.service';
 import { CityFactory } from './city.factory';
 import { CitiesController } from './cities.controller';
 import { CountriesModule } from 'src/countries/countries.module';
+import { CityScoresModule } from 'src/city-scores/city-scores.module';
 
 @Module({
   providers: [CitiesService, CityFactory],
@@ -15,6 +16,7 @@ import { CountriesModule } from 'src/countries/countries.module';
     TypeOrmModule.forFeature([City]),
     PhotosModule,
     CountriesModule,
+    CityScoresModule
   ],
   controllers: [CitiesController],
   exports: [CitiesService],

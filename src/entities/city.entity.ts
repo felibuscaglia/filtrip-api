@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Country } from '.';
+import { CityScore } from './city-score.entity';
 import { Photo } from './photo.entity';
 
 @Entity()
@@ -35,4 +36,7 @@ export class City {
   @ManyToOne(() => Country, (country) => country.cities)
   @JoinColumn({ name: 'country_id' })
   country: Country;
+
+  @OneToMany(() => CityScore, (cityScore) => cityScore.city)
+  scores: CityScore[];
 }

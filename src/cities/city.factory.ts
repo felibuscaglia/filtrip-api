@@ -14,7 +14,6 @@ export class CityFactory {
     region,
     description
   }: IUnformattedCity): Promise<CityDto> {
-    console.log({ description });
     const FORMATTED_CITY: CityDto = {
       name,
       urlSlug: formatUrlSlug(name),

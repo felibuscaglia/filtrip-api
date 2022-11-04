@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CityScoresService } from 'src/city-scores/city-scores.service';
 import { City } from 'src/entities/city.entity';
 import { TELEPORT_API_URL, WIKIPEDIA_API_URL } from 'src/lib/constants';
 import { TELEPORT_ENDPOINT } from 'src/lib/enums';
@@ -29,6 +30,7 @@ export class CitiesService {
     private readonly httpService: HttpService,
     private readonly cityFactory: CityFactory,
     private readonly photosService: PhotosService,
+    private readonly cityScoresService: CityScoresService,
     @InjectRepository(City) private readonly citiesRepository: Repository<City>,
   ) {}
 
@@ -69,11 +71,11 @@ export class CitiesService {
   public getCityByUrlSlug(urlSlug: string) {
     return this.citiesRepository.findOne({
       where: { urlSlug },
-      relations: ['photos', 'country'],
+      relations: ['photos', 'country', 'scores'],
     });
   }
 
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  @Cron('38 22 * * *')
   private async getCitiesJob() {
     this.logger.log('Starting execution of cities job');
 
@@ -108,13 +110,19 @@ export class CitiesService {
             : CITY,
         );
 
-        // City details
         this.logger.log('Saving photos from ' + CITY_NAME);
         await this.saveCityPhotos(
           CITY_DETAILS_DTO._links['ua:images'].href,
           CITY_ENTITY,
         );
         this.logger.log('Saved all images from ' + CITY_NAME);
+
+        this.logger.log('Saving scores from ' + CITY_NAME);
+        await this.cityScoresService.getCityScoresJob(
+          CITY_ENTITY,
+          CITY_DETAILS_DTO._links['ua:scores'].href,
+        );
+        this.logger.log('Saved scores from ' + CITY_NAME);
 
         this.logger.log('Successfully saved ' + CITY_NAME);
       } catch (err) {
