@@ -24,7 +24,7 @@ export class CityScoresService {
       for (const SCORE of CITY_SCORES_DTO.categories) {
         const FORMATTED_CITY_SCORE = await this.cityScoreFactory.format({
           name: SCORE.name,
-          score: SCORE.score_out_of_10,
+          score: Math.round(SCORE.score_out_of_10),
           city,
         });
 

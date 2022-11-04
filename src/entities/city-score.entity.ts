@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -20,5 +21,6 @@ export class CityScore {
   score: number;
 
   @ManyToOne(() => City, (city) => city.scores)
+  @JoinColumn({ name: 'city_id' })
   city: City;
 }

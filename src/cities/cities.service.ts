@@ -71,11 +71,11 @@ export class CitiesService {
   public getCityByUrlSlug(urlSlug: string) {
     return this.citiesRepository.findOne({
       where: { urlSlug },
-      relations: ['photos', 'country'],
+      relations: ['photos', 'country', 'scores'],
     });
   }
 
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  @Cron('38 22 * * *')
   private async getCitiesJob() {
     this.logger.log('Starting execution of cities job');
 
